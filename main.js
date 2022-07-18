@@ -44,3 +44,78 @@ class Square{
         return this.#points
     }
 }
+
+// -------------------------------------------------
+
+class Cube{
+    #points = [];
+    #center
+    #size
+
+    constructor(center, size){
+        this.#center = center;
+        this.#size = size;
+        this.generatePoints(this.#center, this.#size)
+    }
+
+    generatePoints(center, size){
+        size /= 2
+        for(let i = 0; i < 8; i++){
+            this.#points[i] = this.calcPosition(center, size, i)
+        }
+    }
+
+    calcPosition(center, size, corner){
+        let x, y, z;
+        switch(corner){
+            case 0:
+                x = center.x + size
+                y = center.y + size
+                z = center.y + size
+                break;
+            case 1:
+                x = center.x - size
+                y = center.y + size
+                z = center.y + size
+                break;
+            case 2:
+                x = center.x - size
+                y = center.y - size
+                z = center.y + size
+                break;
+            case 3:
+                x = center.x + size
+                y = center.y - size
+                z = center.y + size
+                break;
+            // ---------
+            case 4:
+                x = center.x + size
+                y = center.y + size
+                z = center.y - size
+                break;
+            case 5:
+                x = center.x - size
+                y = center.y + size
+                z = center.y - size
+                break;
+            case 6:
+                x = center.x - size
+                y = center.y - size
+                z = center.y - size
+                break;
+            case 7:
+                x = center.x + size
+                y = center.y - size
+                z = center.y - size
+                break;
+        }
+
+        return { x, y, z }
+    }
+
+    getPoints(){
+        return this.#points
+    }
+}
+
