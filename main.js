@@ -119,3 +119,23 @@ class Cube{
     }
 }
 
+// -------------------------------------------------
+
+window.onload = () => {
+    const spanY = document.getElementById("Y")
+    const scaleUP = document.getElementById("scaleUP")
+    const scaleDOWN = document.getElementById("scaleDOWN")
+
+    scaleUP.addEventListener("click", ()=>{
+        Z += 10;
+    })
+    scaleDOWN.addEventListener("click", ()=>{
+        Z -= 10;
+    })
+
+    const can = document.getElementById("canvas")
+    const con = can.getContext("2d");
+    const canWidth = can.width;
+    const canHeight = can.height;
+
+}
