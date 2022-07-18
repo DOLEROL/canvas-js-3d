@@ -192,6 +192,81 @@ window.onload = () => {
         return [ s_X, s_Y ]
     }
 
+// -------------------------------------------------
 
+    const CAMERA = { 
+        x: (canHeight + 1)/2,
+        y: (canWidth + 1)/2,
+        z: 0
+    };
+
+    let DEG = -2;
+    let Z = 130;
+
+// -------------------------------------------------
+
+    const CENTER = { x: CAMERA.x, y: CAMERA.y, z: 100};
+    const SIZE = 40;
+    // const newSquare = new Square(CENTER, SIZE);
+
+
+// -------------------------------------------------
+//                  TEST
+// -------------------------------------------------
+    function drawWall(points){
+        // rotAndScl(points[0], DEG, CAMERA, CENTER)
+        // rotAndScl(points[1], DEG, CAMERA, CENTER)
+
+        con.beginPath();
+        con.moveTo(...rotAndScl(points[0], DEG, CAMERA, CENTER));
+        con.lineTo(...rotAndScl(points[1], DEG, CAMERA, CENTER));
+        con.lineTo(...rotAndScl(points[2], DEG, CAMERA, CENTER));
+        con.lineTo(...rotAndScl(points[3], DEG, CAMERA, CENTER));
+        con.lineTo(...rotAndScl(points[0], DEG, CAMERA, CENTER));
+        con.stroke();
+    }
+
+    function drawCube(cube){
+        // drawWall([cube[0], cube[4]])
+
+        drawWall([cube[0], cube[1], cube[2], cube[3]])
+        drawWall([cube[0], cube[3], cube[7], cube[4]])
+        drawWall([cube[0], cube[1], cube[5], cube[4]])
+
+        drawWall([cube[1], cube[2], cube[6], cube[5]])
+        drawWall([cube[2], cube[3], cube[7], cube[6]])
+        drawWall([cube[5], cube[4], cube[7], cube[6]])
+    }
+
+    const newCube = new Cube(CENTER, SIZE);
+
+// -------------------------------------------------
+//                  DEBUG
+// -------------------------------------------------  
+    // const {x: x0, y: y0, z: z0} = newCube.getPoints()[0]
+    // const {x: x4, y: y4, z: z4} = newCube.getPoints()[4]
+    // console.log(`${x0} ${y0} ${z0} | ${x4} ${y4} ${z4}`);
+    // drawCube(newCube.getPoints())
+
+// -------------------------------------------------
+
+    let interval = setInterval(() => {
+        con.clearRect(0, 0, canWidth, canHeight);
+
+        DEG+=2;
+        if(DEG > 360) DEG = 0;
+
+        // drawWall(newSquare.getPoints())
+        drawCube(newCube.getPoints())
+
+        con.closePath();
+        con.fillStyle = DEG > 90 && DEG < 270 ? "#ffd700" : "#ff80ed";
+        con.fill();
+
+    }, 1000/30)
+
+    setTimeout(()=>{
+        clearInterval(interval)
+    }, 1000 * 10)
 
 }
