@@ -138,4 +138,60 @@ window.onload = () => {
     const canWidth = can.width;
     const canHeight = can.height;
 
+// -------------------------------------------------
+
+    function degToRad(deg){
+        return Math.PI * deg / 180;
+    }
+
+    function rotate_Y(point, deg, d){
+        const rad = degToRad(deg);
+
+        let z = point.z - d.z;
+        let y = point.y - d.y;
+
+        let zPrim = z * Math.cos(rad) - y * Math.sin(rad);
+        let yPrim = z * Math.sin(rad) + y * Math.cos(rad);
+
+        return { y: Math.round(yPrim + d.y), z: Math.round(zPrim + d.z) }; 
+    }
+
+    function rotate_X(point, deg, mid){
+        const rad = degToRad(deg);
+
+        let z = point.z - mid.z;
+        let x = point.x - mid.x;
+
+        let zPrim = z * Math.cos(rad) - x * Math.sin(rad);
+        let xPrim = z * Math.sin(rad) + x * Math.cos(rad);
+
+        return { x: Math.round(xPrim + mid.x), z: Math.round(zPrim + mid.z) }; 
+    }
+
+    function scale(xy, z, zs, po_xy){
+        return Math.round(
+            Math.tan(
+                Math.atan((xy - po_xy) / z)
+            ) * zs + po_xy
+        );
+    }
+
+    function rotAndScl(p_1, deg, CAMERA, MID){
+        spanY.innerText = deg
+
+        const r_X = rotate_X(p_1, deg, MID)
+        const s_X = scale(r_X.x, r_X.z, Z, CAMERA.x);
+
+        const s_Y = scale(p_1.y, r_X.z, Z, CAMERA.y);
+        // const r_Y = rotate_Y(p_1, 0, MID)
+        // const s_Y = scale(r_Y.y, r_Y.z, Z, CAMERA.y);
+
+        // console.log(p_1)
+        // console.log(`DEG: ${DEG} \nXz:${r_X.z} Xs${s_X} Ys:${s_Y}`)
+
+        return [ s_X, s_Y ]
+    }
+
+
+
 }
