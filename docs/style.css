@@ -5,6 +5,7 @@
 .flex{
     display: flex;
     flex-wrap: wrap;
+    max-width: 500px;
 }
 
 .flex-item-1{
