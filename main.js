@@ -71,43 +71,43 @@ class Cube{
             case 0:
                 x = center.x + size
                 y = center.y + size
-                z = center.y + size
+                z = center.z + size
                 break;
             case 1:
                 x = center.x - size
                 y = center.y + size
-                z = center.y + size
+                z = center.z + size
                 break;
             case 2:
                 x = center.x - size
                 y = center.y - size
-                z = center.y + size
+                z = center.z + size
                 break;
             case 3:
                 x = center.x + size
                 y = center.y - size
-                z = center.y + size
+                z = center.z + size
                 break;
             // ---------
             case 4:
                 x = center.x + size
                 y = center.y + size
-                z = center.y - size
+                z = center.z - size
                 break;
             case 5:
                 x = center.x - size
                 y = center.y + size
-                z = center.y - size
+                z = center.z - size
                 break;
             case 6:
                 x = center.x - size
                 y = center.y - size
-                z = center.y - size
+                z = center.z - size
                 break;
             case 7:
                 x = center.x + size
                 y = center.y - size
-                z = center.y - size
+                z = center.z - size
                 break;
         }
 
@@ -201,7 +201,7 @@ window.onload = () => {
     };
 
     let DEG = -2;
-    let Z = 130;
+    let Z = 350;
 
 // -------------------------------------------------
 
@@ -253,7 +253,7 @@ window.onload = () => {
     let interval = setInterval(() => {
         con.clearRect(0, 0, canWidth, canHeight);
 
-        DEG+=2;
+        DEG+=1;
         if(DEG > 360) DEG = 0;
 
         // drawWall(newSquare.getPoints())
@@ -263,10 +263,16 @@ window.onload = () => {
         con.fillStyle = DEG > 90 && DEG < 270 ? "#ffd700" : "#ff80ed";
         con.fill();
 
-    }, 1000/30)
+    }, 1000/60)
 
     setTimeout(()=>{
         clearInterval(interval)
-    }, 1000 * 10)
+    }, 1000 * 100)
 
 }
+
+// -------------------------------------------------
+//                  TODO
+// -------------------------------------------------  
+//
+//  - Środek figury określa kolejność rysowania figury
