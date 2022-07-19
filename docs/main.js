@@ -1,43 +1,35 @@
-class Square{
+// rectangular triangle
+class Triangle{
+    constructor(center, size){
+        this.center = center
+        this.size = size
+    }
+
+    generatePoints(figure){
+        switch(figure.toLowerCase()){
+            case "square":
+                return this.square(this.center, this.size);
+        }
+    }
+
+    square(center, size){
+        size /= 2;
+
+        return [
+            { x: center.x - size, y: center.y + size, z: center.z },
+            { x: center.x - size, y: center.y - size, z: center.z },
+            { x: center.x + size, y: center.y - size, z: center.z },
+            { x: center.x + size, y: center.y + size, z: center.z }
+        ]
+    }
+}
+
+class Square extends Triangle{
     #points = [];
-    #center
-    #size
 
     constructor(center, size){
-        this.#center = center;
-        this.#size = size;
-        this.generatePoints(this.#center, this.#size)
-    }
-
-    generatePoints(center, size){
-        size /= 2
-        for(let i = 0; i < 4; i++){
-            this.#points[i] = this.calcPosition(center, size, i)
-        }
-    }
-
-    calcPosition(center, size, corner){
-        let x, y;
-        switch(corner){
-            case 0:
-                x = center.x + size
-                y = center.y + size
-                break;
-            case 1:
-                x = center.x - size
-                y = center.y + size
-                break;
-            case 2:
-                x = center.x - size
-                y = center.y - size
-                break;
-            case 3:
-                x = center.x + size
-                y = center.y - size
-                break;
-        }
-
-        return { x, y, z: center.z }
+        super(center, size);
+        this.#points = super.generatePoints(Square.name);
     }
 
     getPoints(){
@@ -71,43 +63,43 @@ class Cube{
             case 0:
                 x = center.x + size
                 y = center.y + size
-                z = center.y + size
+                z = center.z + size
                 break;
             case 1:
                 x = center.x - size
                 y = center.y + size
-                z = center.y + size
+                z = center.z + size
                 break;
             case 2:
                 x = center.x - size
                 y = center.y - size
-                z = center.y + size
+                z = center.z + size
                 break;
             case 3:
                 x = center.x + size
                 y = center.y - size
-                z = center.y + size
+                z = center.z + size
                 break;
             // ---------
             case 4:
                 x = center.x + size
                 y = center.y + size
-                z = center.y - size
+                z = center.z - size
                 break;
             case 5:
                 x = center.x - size
                 y = center.y + size
-                z = center.y - size
+                z = center.z - size
                 break;
             case 6:
                 x = center.x - size
                 y = center.y - size
-                z = center.y - size
+                z = center.z - size
                 break;
             case 7:
                 x = center.x + size
                 y = center.y - size
-                z = center.y - size
+                z = center.z - size
                 break;
         }
 
@@ -123,8 +115,10 @@ class Cube{
 
 window.onload = () => {
     const spanY = document.getElementById("Y")
+    const spanX = document.getElementById("X")
     const scaleUP = document.getElementById("scaleUP")
     const scaleDOWN = document.getElementById("scaleDOWN")
+    const radio = document.querySelectorAll('input[type="radio"]')
 
     scaleUP.addEventListener("click", ()=>{
         Z += 10;
@@ -144,7 +138,7 @@ window.onload = () => {
         return Math.PI * deg / 180;
     }
 
-    function rotate_Y(point, deg, d){
+    function rotateY(point, deg, d){
         const rad = degToRad(deg);
 
         let z = point.z - d.z;
@@ -156,7 +150,7 @@ window.onload = () => {
         return { y: Math.round(yPrim + d.y), z: Math.round(zPrim + d.z) }; 
     }
 
-    function rotate_X(point, deg, mid){
+    function rotateX(point, deg, mid){
         const rad = degToRad(deg);
 
         let z = point.z - mid.z;
@@ -168,28 +162,41 @@ window.onload = () => {
         return { x: Math.round(xPrim + mid.x), z: Math.round(zPrim + mid.z) }; 
     }
 
-    function scale(xy, z, zs, po_xy){
+    function scale(xy, z, zs, pC){
         return Math.round(
             Math.tan(
-                Math.atan((xy - po_xy) / z)
-            ) * zs + po_xy
+                Math.atan((xy - pC) / z)
+            ) * zs + pC
         );
     }
 
-    function rotAndScl(p_1, deg, CAMERA, MID){
-        spanY.innerText = deg
+    function rotateScaleAxisY(p1, deg, CAMERA, MID){
+        spanY.innerText = deg.y
+        spanX.innerText = deg.x
 
-        const r_X = rotate_X(p_1, deg, MID)
-        const s_X = scale(r_X.x, r_X.z, Z, CAMERA.x);
+        const rX = rotateX(p1, deg.y, MID)
+        const sX = scale(rX.x, rX.z, Z, CAMERA.x);
 
-        const s_Y = scale(p_1.y, r_X.z, Z, CAMERA.y);
-        // const r_Y = rotate_Y(p_1, 0, MID)
-        // const s_Y = scale(r_Y.y, r_Y.z, Z, CAMERA.y);
+        const sY = scale(p1.y, rX.z, Z, CAMERA.y);
 
-        // console.log(p_1)
-        // console.log(`DEG: ${DEG} \nXz:${r_X.z} Xs${s_X} Ys:${s_Y}`)
 
-        return [ s_X, s_Y ]
+        return [ sX, sY ]
+    }
+
+    function rotateScaleAxisX(p1, deg, CAMERA, MID){
+        spanY.innerText = deg.y
+        spanX.innerText = deg.x
+
+        const rY = rotateY(p1, deg.x, MID)
+        const sY = scale(rY.y, rY.z, Z, CAMERA.y);
+
+        const sX = scale(p1.x, rY.z, Z, CAMERA.x);
+
+        return [ sX, sY ]
+    }
+
+    function rotateScale(p1, deg, CAMERA, MID){
+        return deg.rot == "y" ? rotateScaleAxisY(p1, deg, CAMERA, MID) : rotateScaleAxisX(p1, deg, CAMERA, MID);
     }
 
 // -------------------------------------------------
@@ -200,8 +207,13 @@ window.onload = () => {
         z: 0
     };
 
-    let DEG = -2;
-    let Z = 130;
+    let DEG = {
+        x: 0,
+        y: 0,
+        rot: 'x'
+    };
+
+    let Z = 350;
 
 // -------------------------------------------------
 
@@ -214,21 +226,16 @@ window.onload = () => {
 //                  TEST
 // -------------------------------------------------
     function drawWall(points){
-        // rotAndScl(points[0], DEG, CAMERA, CENTER)
-        // rotAndScl(points[1], DEG, CAMERA, CENTER)
-
         con.beginPath();
-        con.moveTo(...rotAndScl(points[0], DEG, CAMERA, CENTER));
-        con.lineTo(...rotAndScl(points[1], DEG, CAMERA, CENTER));
-        con.lineTo(...rotAndScl(points[2], DEG, CAMERA, CENTER));
-        con.lineTo(...rotAndScl(points[3], DEG, CAMERA, CENTER));
-        con.lineTo(...rotAndScl(points[0], DEG, CAMERA, CENTER));
+        con.moveTo(...rotateScale(points[0], DEG, CAMERA, CENTER));
+        con.lineTo(...rotateScale(points[1], DEG, CAMERA, CENTER));
+        con.lineTo(...rotateScale(points[2], DEG, CAMERA, CENTER));
+        con.lineTo(...rotateScale(points[3], DEG, CAMERA, CENTER));
+        con.lineTo(...rotateScale(points[0], DEG, CAMERA, CENTER));
         con.stroke();
     }
 
     function drawCube(cube){
-        // drawWall([cube[0], cube[4]])
-
         drawWall([cube[0], cube[1], cube[2], cube[3]])
         drawWall([cube[0], cube[3], cube[7], cube[4]])
         drawWall([cube[0], cube[1], cube[5], cube[4]])
@@ -239,7 +246,7 @@ window.onload = () => {
     }
 
     const newCube = new Cube(CENTER, SIZE);
-
+    console.log(newCube.getPoints())
 // -------------------------------------------------
 //                  DEBUG
 // -------------------------------------------------  
@@ -250,24 +257,34 @@ window.onload = () => {
 
 // -------------------------------------------------
 
+
     let interval = setInterval(() => {
         con.clearRect(0, 0, canWidth, canHeight);
 
-        DEG+=2;
-        if(DEG > 360) DEG = 0;
+        radio.forEach(element => {
+            if(element.id == "radioX" && element.checked){
+                DEG.x+=1;
+                if(DEG.x > 360) DEG.x = 0;
+                DEG.rot = 'x';
+            }else if(element.id == "radioY" && element.checked){
+                DEG.y+=1;
+                if(DEG.y > 360) DEG.y = 0;
+                DEG.rot = 'y'
+            }
+        });
 
         // drawWall(newSquare.getPoints())
         drawCube(newCube.getPoints())
 
         con.closePath();
-        con.fillStyle = DEG > 90 && DEG < 270 ? "#ffd700" : "#ff80ed";
+        con.fillStyle = DEG.x > 90 && DEG.x < 270 ? "#ffd700" : "#ff80ed";
         con.fill();
 
-    }, 1000/30)
+    }, 1000/60)
 
     setTimeout(()=>{
         clearInterval(interval)
-    }, 1000 * 10)
+    }, 1000 * 100)
 
 }
 
@@ -275,4 +292,4 @@ window.onload = () => {
 //                  TODO
 // -------------------------------------------------  
 //
-//  - Środek figury określa kolejność narysowania
+//  - Środek figury określa kolejność rysowania figury

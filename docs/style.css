@@ -1,0 +1,16 @@
+#canvas{
+    border: 1px solid black;
+}
+
+.flex{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-item-1{
+    flex: 1 0
+}
+
+.flex-item-2{
+    flex: 2 0
+}
