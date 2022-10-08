@@ -76,7 +76,15 @@ class Cube
     }
 
     getPoints(){
-        return this.#points
+        return [
+            [this.#points[0], this.#points[1], this.#points[2], this.#points[3]],
+            [this.#points[0], this.#points[3], this.#points[7], this.#points[4]],
+            [this.#points[0], this.#points[1], this.#points[5], this.#points[4]],
+
+            [this.#points[1], this.#points[2], this.#points[6], this.#points[5]],
+            [this.#points[2], this.#points[3], this.#points[7], this.#points[6]],
+            [this.#points[5], this.#points[4], this.#points[7], this.#points[6]]
+        ]
     }
 
     setCon(con)
@@ -111,13 +119,21 @@ class Cube
 
     drawCube(cube)
     {
-        this.drawWall([cube[0], cube[1], cube[2], cube[3]])
-        this.drawWall([cube[0], cube[3], cube[7], cube[4]])
-        this.drawWall([cube[0], cube[1], cube[5], cube[4]])
+        let cubeTest = this.drawOrder(cube)
+        console.log(cubeTest)
+        cube.forEach((wallPoints) => this.drawWall(wallPoints))
+    }
 
-        this.drawWall([cube[1], cube[2], cube[6], cube[5]])
-        this.drawWall([cube[2], cube[3], cube[7], cube[6]])
-        this.drawWall([cube[5], cube[4], cube[7], cube[6]])
+    drawOrder(cube)
+    {
+        return cube
+            .map((item) => this.avg(item.map((yaItem) => this.rotateXY(yaItem, this.#DEG, this.#CENTER))))
+            .sort((a, b) => a - b)
+    }
+
+    avg(points)
+    {
+        return (points[0].z + points[1].z + points[2].z + points[3].z) / 4
     }
 
     drawWall(points)
@@ -174,6 +190,8 @@ class Cube
 
         return { x: xPrim, y: yPrim, z: zPrimPrim };
     }
+
+
 
     degToRad(deg)
     {
