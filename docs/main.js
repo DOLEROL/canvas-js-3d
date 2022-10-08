@@ -76,6 +76,6 @@ window.onload = () => {
         () => {
             clearInterval(interval)
         },
-        1000 * 10
+        1000 * 150
     )
 }

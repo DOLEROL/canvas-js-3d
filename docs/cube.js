@@ -119,16 +119,24 @@ class Cube
 
     drawCube(cube)
     {
-        let cubeTest = this.drawOrder(cube)
-        console.log(cubeTest)
-        cube.forEach((wallPoints) => this.drawWall(wallPoints))
+        this.drawOrder(cube).forEach((wallPoints, index) => this.drawWall(wallPoints[0], index))
     }
 
     drawOrder(cube)
     {
         return cube
-            .map((item) => this.avg(item.map((yaItem) => this.rotateXY(yaItem, this.#DEG, this.#CENTER))))
-            .sort((a, b) => a - b)
+            .map(
+                (item) => {
+                    let rot = item.map(
+                        (yaItem) => this.rotateXY(yaItem, this.#DEG, this.#CENTER)
+                    )
+
+                    return [rot, this.avg(rot)]
+                }
+            )
+            .sort(
+                (a, b) => b[1] - a[1]
+            )
     }
 
     avg(points)
@@ -136,30 +144,29 @@ class Cube
         return (points[0].z + points[1].z + points[2].z + points[3].z) / 4
     }
 
-    drawWall(points)
+    drawWall(points, index)
     {
         this.#con.beginPath();
-        this.#con.moveTo(...this.rotateScaleAxisXY(points[0], this.#DEG, this.#CAMERA, this.#CENTER));
-        this.#con.lineTo(...this.rotateScaleAxisXY(points[1], this.#DEG, this.#CAMERA, this.#CENTER));
-        this.#con.lineTo(...this.rotateScaleAxisXY(points[2], this.#DEG, this.#CAMERA, this.#CENTER));
-        this.#con.lineTo(...this.rotateScaleAxisXY(points[3], this.#DEG, this.#CAMERA, this.#CENTER));
-        this.#con.lineTo(...this.rotateScaleAxisXY(points[0], this.#DEG, this.#CAMERA, this.#CENTER));
+        this.#con.moveTo(...this.scaleAxisXY(points[0], this.#DEG, this.#CAMERA));
+        this.#con.lineTo(...this.scaleAxisXY(points[1], this.#DEG, this.#CAMERA));
+        this.#con.lineTo(...this.scaleAxisXY(points[2], this.#DEG, this.#CAMERA));
+        this.#con.lineTo(...this.scaleAxisXY(points[3], this.#DEG, this.#CAMERA));
+        this.#con.lineTo(...this.scaleAxisXY(points[0], this.#DEG, this.#CAMERA));
         this.#con.stroke();
 
         this.#con.closePath();
-        this.#con.fillStyle = this.#DEG.x > 90 && this.#DEG.x < 270 ? "#ffd700" : "#ff80ed";
+        this.#con.fillStyle = index % 2 === 0 ? "#ffd700" : "#ff80ed";
+        // this.#con.fillStyle = this.#DEG.x > 90 && this.#DEG.x < 270 ? "#ffd700" : "#ff80ed";
         this.#con.fill();
     }
 
-    rotateScaleAxisXY (point, deg, CAMERA, MID)
+    scaleAxisXY (point, deg, CAMERA)
     {
         this.#spanY.innerText = deg.y;
         this.#spanX.innerText = deg.x;
 
-        const rot = this.rotateXY(point, deg, MID);
-
-        const sY = this.scale(rot.y, rot.z, this.#Z, CAMERA.y);
-        const sX = this.scale(rot.x, rot.z, this.#Z, CAMERA.x);
+        const sY = this.scale(point.y, point.z, this.#Z, CAMERA.y);
+        const sX = this.scale(point.x, point.z, this.#Z, CAMERA.x);
 
         return [ sX, sY ]
     }
@@ -190,8 +197,6 @@ class Cube
 
         return { x: xPrim, y: yPrim, z: zPrimPrim };
     }
-
-
 
     degToRad(deg)
     {
