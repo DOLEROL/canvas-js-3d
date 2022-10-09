@@ -29,11 +29,10 @@ window.onload = () => {
 
     let DEG = {
         x: 0,
-        y: 0,
-        rot: 'x'
+        y: 140
     };
 
-    let Z = 350;
+    let Z = 150;
 
     const CENTER = { x: CAMERA.x, y: CAMERA.y, z: 100};
     const SIZE = 40;
@@ -42,13 +41,14 @@ window.onload = () => {
 // -------------------------------------------------
 //                  TEST
 // -------------------------------------------------
-    const newCube = new Cube(CENTER, SIZE);
+
+    const newCube = new area({x: 50, z:50});
+
+    // const newCube = new rhombusCone(CENTER, SIZE);
     newCube.setCon(con);
     newCube.setSpanY(spanY);
     newCube.setSpanX(spanX);
     newCube.setCamera(CAMERA);
-    newCube.setDeg(DEG);
-    newCube.setZ(Z);
 
     let interval = setInterval(
         () => {
@@ -62,14 +62,20 @@ window.onload = () => {
                 } else if (element.id === "radioY" && element.checked) {
                     DEG.y+=1;
                     if(DEG.y > 360) DEG.y = 0;
-                    DEG.rot = 'y'
-                }
+                } else if (element.id === "radioXY" && element.checked) {
+                    DEG.x+=1;
+                    if(DEG.x > 360) DEG.x = 0;
+                    DEG.y+=1;
+                    if(DEG.y > 360) DEG.y = 0;
+                } 
             });
 
+            newCube.setZ(Z);
             newCube.setDeg(DEG);
-            newCube.drawCube(newCube.getPoints());
+            newCube.drawArea();
+            // newCube.drawCube(newCube.getPoints());
         },
-        1000/20
+        1000/10
     )
 
     setTimeout(
